@@ -28,7 +28,10 @@ Run it with
 replace `#` by the number of core, `APP` by the filename of the compiled code and `Input` by the input parameters file.
 
 # Example
-In the `examples` folder, I use the dissipative transverse Ising model as examples. Two different methods are used to compute time evolution of the system. `examples/transIsing/` is easier to understand and implement while `examples/transIsingBondGate/` is more involved but turns out to be more efficient in some cases. 
+In the `examples` folder, I use the dissipative transverse Ising model as examples. 
+Two different methods are used to compute time evolution of the system. 
+`examples/transIsing/` is easier to understand and implement.
+`examples/transIsingBondGate/` is more involved but turns out to be more efficient in some cases. 
 
 Consider a 1D spin-1/2 chain, the interaction between the nearest neighbor spins is Ising interaction in x-direction and the magnetic field is applied in z-direction. Meanwhile, there exists local dissipation described by the jump operator S^-. 
 
