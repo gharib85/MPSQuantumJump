@@ -1,8 +1,8 @@
-#ifndef __QUANTUMJUMPHELPERS__
-#define __QUANTUMJUMPHELPERS__
+#ifndef __MPSQUANTUMJUMPHELPERS__
+#define __MPSQUANTUMJUMPHELPERS__
 
 # include "itensor/all.h"
-# include "QuantumJump.h"
+# include "MPSQuantumJump.h"
 using namespace itensor;
 
 

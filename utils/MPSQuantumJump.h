@@ -1,5 +1,5 @@
-#ifndef QUANTUMJUMP_H
-#define QUANTUMJUMP_H
+#ifndef MPSQUANTUMJUMP_H
+#define MPSQUANTUMJUMP_H
 
 # include "itensor/all.h"
 # include "itensor/util/parallel.h"

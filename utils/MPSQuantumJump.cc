@@ -1,8 +1,8 @@
 # include "itensor/all.h"
 # include <vector>
-# include "QuantumJump.h"
+# include "MPSQuantumJump.h"
 # include <iostream>
-#include "QuantumJumpHelpers.h"
+#include "MPSQuantumJumpHelpers.h"
 
 using namespace itensor;
 using namespace std;

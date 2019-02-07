@@ -2,10 +2,10 @@ LIBRARY_DIR=
 MPSQuantumJump_DIR=
 
 APP=main
-HEADERS += $(MPSQuantumJump_DIR)/utils/QuantumJump.h
+HEADERS+=$(MPSQuantumJump_DIR)/MPSQuantumJump.h
 
-CCFILES = $(APP).cc 
-CCFILES += $(MPSQuantumJump_DIR)/utils/QuantumJump.cc
+CCFILES=$(APP).cc 
+CCFILES+=$(MPSQuantumJump_DIR)/MPSQuantumJump.cc
 #################################################################
 #################################################################
 #################################################################
@@ -15,7 +15,7 @@ CCFILES += $(MPSQuantumJump_DIR)/utils/QuantumJump.cc
 include $(LIBRARY_DIR)/this_dir.mk
 include $(LIBRARY_DIR)/options_mpi.mk
 
-CCFLAGS += -I$(QuantumJump_DIR)
+CCFLAGS += -I$(MPSQuantumJump_DIR)
 
 TENSOR_HEADERS=$(LIBRARY_DIR)/itensor/core.h
 
