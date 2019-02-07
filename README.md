@@ -17,11 +17,15 @@ To install MPI, see https://www.open-mpi.org/
 `CCCOM=mpic++ -std=c++11 -fPIC`
 * For GCC On Windows cygwin
 `CCCOM=mpic++ -std=c++11 -Wa,-mbig-obj -O2 -fPIC`
-## Step 2: Compile the code by using the `Makefile` 
-Use the `Makefile` provided here to compile the code. 
-
+## Step 2: Compile the code by using the `Makefile` provided in the example folder.
 In the `Makefile`, set the `iTensor` path in the parameter `LIBRARY_DIR` and set the `MPSQuantumJump` path in the parameter `MPSQuantumJump_DIR`. 
 
-See MPSQuantumJump/example/ for more details.
+## Step 3: Run the code
+Run it with
+`mpirun -np # APP Input`
+replace `#` by the number of core, `APP` by the filename of the compiled code and `Input` by the input parameters file.
+
+# Example
+
 
 
