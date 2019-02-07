@@ -44,3 +44,4 @@ The system consists of three parameters:
 `gamma` : decay rate of the local dissipation
 
 One can modify these parameters in the `inputs` file.
+
