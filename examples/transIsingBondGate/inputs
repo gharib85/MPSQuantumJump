@@ -1,0 +1,20 @@
+input{
+    //MPS parameters
+    cutoff = 1E-8
+    Maxm = 800
+    
+    //Quantum Trajectory parameters
+    Ntrial = 10
+    tmax = 1
+    dt = 1E-2
+    
+    //output file name 
+    foo = data.txt
+    
+    //system parameters
+    N_site = 5
+    Steady_state_Only = no
+    gamma = 0.5
+    Jz = 0.1
+    Jx = -1
+    }
