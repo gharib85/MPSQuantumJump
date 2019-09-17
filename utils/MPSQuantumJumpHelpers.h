@@ -68,6 +68,7 @@ applyGate(Iterable const& gatelist,
 MPSt<T>& psi, 
 Args args)
 {
+    psi.position(gatelist.front().i1());
     auto g = gatelist.begin();
     while(g != gatelist.end())
     {
