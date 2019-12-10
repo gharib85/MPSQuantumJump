@@ -103,7 +103,7 @@ template<typename T>
 QuantumJump<T>::QuantumJump( 
     double dt, 
     double Tf, 
-    vector<BondGate<T>> gates, 
+    vector<TGate<T>> gates, 
     vector<TGate<T>> cm, 
     MPSt<T> psi_init, 
     vector<MPOt<T>> OBS, 
@@ -208,10 +208,10 @@ QuantumJump<T>::onetrial()
     auto psi = psi_init_;
     for (int step=0; step<Ntstep_; step++)
         {
-        //if (step %10 == 0)
-        //    {
-        //    cout << "Rank = "<< MPI_rank_ << ": step = " << step << endl;
-        //    }
+        if (step %10 == 0)
+            {
+            cout << "Rank = "<< MPI_rank_ << ": step = " << step << "\t" << maxM(psi) << endl;
+            }
         // Do measurement
         if (!SS_)
             {
@@ -246,7 +246,7 @@ QuantumJump<T>::onetrial()
                 }
             if(dp > 0.1)
                 {
-                cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
+                //cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
                 }
 
             // Generate randum number
@@ -255,7 +255,7 @@ QuantumJump<T>::onetrial()
             //No jump
             if (e>dp) 
                 {      
-                exactApplyMPO(psi,U_,psi);
+                exactApplyMPO(psi,U_,psi,args_);
                 psi.position(1,args_);
                 }
 
@@ -269,7 +269,7 @@ QuantumJump<T>::onetrial()
                 // 
                 //fitApplyMPO(psi,cm_[siteJ],psi,args_);
                 
-                exactApplyMPO(psi,cm_[siteJ],psi);
+                exactApplyMPO(psi,cm_[siteJ],psi,args_);
                 psi.position(1,args_);
                 }
 
@@ -376,7 +376,7 @@ template
 QuantumJump<ITensor>::QuantumJump( 
     double dt, 
     double Tf, 
-    vector<BondGate<ITensor>> gates, 
+    vector<TGate<ITensor>> gates, 
     vector<TGate<ITensor>> cm, 
     MPSt<ITensor> psi_init, 
     vector<MPOt<ITensor>> OBS, 
@@ -388,7 +388,7 @@ template
 QuantumJump<IQTensor>::QuantumJump( 
     double dt, 
     double Tf, 
-    vector<BondGate<IQTensor>> gates, 
+    vector<TGate<IQTensor>> gates, 
     vector<TGate<IQTensor>> cm, 
     MPSt<IQTensor> psi_init, 
     vector<MPOt<IQTensor>> OBS, 

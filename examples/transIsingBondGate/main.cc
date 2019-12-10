@@ -63,12 +63,13 @@ int main ( int argc, char *argv[] )
     for(int j = 1; j <= N_site; ++j)
         {
         auto T = sqrt(gamma)*sites.op("S-",j);
-        cm.emplace_back(j, T);
+        cm.emplace_back(T, j, 1);
         }
 
     //-----------------------------------------------------
     //-------- Time evolution operator --------------------
-	auto gates = vector<UGate>();
+
+	auto gates = vector<TGate<ITensor>>();
 	for(int j = 1; j < N_site; ++j)
         {
         ITensor hh;
@@ -108,7 +109,8 @@ int main ( int argc, char *argv[] )
         //Sx*Sx
         hh += Jx * ITensor(sites.op("Sx",j))* ITensor(sites.op("Sx",j+1));
         
-        auto g = UGate(sites,j,j+1,UGate::tReal,dt/2.,hh);
+        auto g = TGate<ITensor>(hh, j, 2);
+        ExpTGate(g, sites, dt/2);
     	gates.push_back(g);
         }
         
@@ -151,8 +153,8 @@ int main ( int argc, char *argv[] )
         //Sx*Sx
         hh += Jx * ITensor(sites.op("Sx",j))* ITensor(sites.op("Sx",j+1));
         
-        auto g = UGate(sites,j,j+1,UGate::tReal,dt/2.,hh);
-        
+        auto g = TGate<ITensor>(hh, j, 2);
+        ExpTGate(g, sites, dt/2);
     	gates.push_back(g);
         }
 
