@@ -208,10 +208,10 @@ QuantumJump<T>::onetrial()
     auto psi = psi_init_;
     for (int step=0; step<Ntstep_; step++)
         {
-        if (step %10 == 0)
-            {
-            cout << "Rank = "<< MPI_rank_ << ": step = " << step << "\t" << maxM(psi) << endl;
-            }
+        //if (step %10 == 0)
+        //    {
+        //    cout << "Rank = "<< MPI_rank_ << ": step = " << step << "\t" << maxM(psi) << endl;
+        //    }
         // Do measurement
         if (!SS_)
             {
@@ -244,36 +244,26 @@ QuantumJump<T>::onetrial()
                 dpj.at(j) = dt_ * real(overlapC(psi, CC_.at(j), psi));
                 dp += dpj.at(j);
                 }
-            if(dp > 0.1)
-                {
-                //cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
-                }
+            //if(dp > 0.1)
+            //    {
+            //      cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
+            //    }
 
             // Generate randum number
             double e = ((double) rand() / (RAND_MAX));
 
-            //No jump
-            if (e>dp) 
-                {      
-                exactApplyMPO(psi,U_,psi,args_);
-                psi.position(1,args_);
-                }
+            // unitary time evolution
+            exactApplyMPO(psi,U_,psi,args_);
 
-            //jump
-            else if (e<dp) 
+            if (e<dp) 
                 {  
                 int siteJ=whichsitejump(dpj,dp);
-                ////////////////////////////////////////////////////
-                // I don't know why I keep getting zero norm error
-                // for fitApplyMPO so I do exactApplyMPO and svd
-                // 
-                //fitApplyMPO(psi,cm_[siteJ],psi,args_);
-                
                 exactApplyMPO(psi,cm_[siteJ],psi,args_);
                 psi.position(1,args_);
                 }
-
             
+            psi.position(1);
+            normalize(psi);
             }
         else if(JumpOpType_==2)
             {
@@ -285,19 +275,18 @@ QuantumJump<T>::onetrial()
                 dpj.at(j) = dt_ * overlap_TGate(psi, CC_Gate_.at(j));
                 dp += dpj.at(j);
                 }
-            if(dp > 0.1)
-                {
-                cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
-                }
+            //if(dp > 0.1)
+            //    {
+            //    cout << "Warning : dp = " << dp << ". Please decrease the time step dt." << endl;
+            //    }
+            
             // Generate randum number
             double e = ((double) rand() / (RAND_MAX));
-            //No jump   
-            if (e>dp) 
-                {  
-                applyGate(U_Gates_, psi, args_);
-                }
-            //jump
-            else if (e<dp)
+            
+            // unitary time evolution
+            applyGate(U_Gates_, psi, args_);
+
+            if (e<dp)
                 {
                 int siteJ=whichsitejump(dpj,dp);
                 ApplyTGate<T>(psi, cm_Gate_.at(siteJ),args_);

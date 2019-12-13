@@ -3,6 +3,51 @@
 #include <iomanip>
 using namespace std;
 
+TGate<ITensor> local_time_evolution_gate(SiteSet& sites, double gamma, double hz, double Jx, int j, double delta_t)
+    {
+    
+    ITensor hh;
+    if(j == 1)
+        {
+        //non hermitian part 
+        hh += -Cplx_i * gamma/2 * sites.op("projUp",j)* sites.op("Id",j+1);
+        hh += -Cplx_i/2 * gamma/2 * sites.op("Id",j)* sites.op("projUp",j+1);
+        
+        //hermitian part
+        //Sz
+        hh += hz * ITensor(sites.op("Sz",j))* sites.op("Id",j+1);
+        hh += hz/2 * sites.op("Id",j)* ITensor(sites.op("Sz",j+1));
+        }
+    else if(j == sites.N()-1)
+        {
+        //non hermitian part 
+        hh += -Cplx_i/2 * gamma/2 * sites.op("projUp",j)* sites.op("Id",j+1);
+        hh += -Cplx_i * gamma/2 * sites.op("Id",j)* sites.op("projUp",j+1);
+        
+        //hermitian part
+        //Sz
+        hh += hz/2 * ITensor(sites.op("Sz",j))* sites.op("Id",j+1);
+        hh += hz * sites.op("Id",j)* ITensor(sites.op("Sz",j+1));
+        }
+    else
+        {
+        //non hermitian part 
+        hh += -Cplx_i/2 * gamma/2 * sites.op("projUp",j)* sites.op("Id",j+1);
+        hh += -Cplx_i/2 * gamma/2 * sites.op("Id",j)* sites.op("projUp",j+1);
+        
+        //hermitian part
+        //Sz
+        hh += hz/2 * ITensor(sites.op("Sz",j))* sites.op("Id",j+1);
+        hh += hz/2 * sites.op("Id",j)* ITensor(sites.op("Sz",j+1));
+        }
+    //Sx*Sx
+    hh += Jx * ITensor(sites.op("Sx",j))* ITensor(sites.op("Sx",j+1));
+    
+    auto g = TGate<ITensor>(hh, j, 2);
+    ExpTGate(g, sites, delta_t);
+    return g;
+    }
+
 int main ( int argc, char *argv[] )
 {
 
@@ -34,7 +79,7 @@ int main ( int argc, char *argv[] )
 
 	// transverse Ising model parameters
     auto gamma = input.getReal("gamma",0.0);
-    auto Jz = input.getReal("Jz",0.0);
+    auto hz = input.getReal("hz",0.0);
     auto Jx = input.getReal("Jx",-1);
 	
     
@@ -59,105 +104,34 @@ int main ( int argc, char *argv[] )
     //-----------------------------------------------------
     //-------- Jump operator ------------------------------
 	//Jump operators cm : sigma-_i
+    
     vector<OpGate> cm;
     for(int j = 1; j <= N_site; ++j)
         {
         auto T = sqrt(gamma)*sites.op("S-",j);
         cm.emplace_back(T, j, 1);
         }
-
+    
     //-----------------------------------------------------
     //-------- Time evolution operator --------------------
-
-	auto gates = vector<TGate<ITensor>>();
-	for(int j = 1; j < N_site; ++j)
+    // second order trotter gate
+    
+    auto gates = vector<TGate<ITensor>>();
+    for(int j = 1; j < N_site; j+=2)
         {
-        ITensor hh;
-		if(j == 1)
-            {
-            //non hermitian part 
-		    hh += -Cplx_i * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i/2 * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz/2 * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        else if(j == N_site-1)
-            {
-            //non hermitian part 
-		    hh += -Cplx_i/2 * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz/2 * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        else
-            {
-            //non hermitian part 
-		    hh += -Cplx_i/2 * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i/2 * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz/2 * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz/2 * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        //Sx*Sx
-        hh += Jx * ITensor(sites.op("Sx",j))* ITensor(sites.op("Sx",j+1));
-        
-        auto g = TGate<ITensor>(hh, j, 2);
-        ExpTGate(g, sites, dt/2);
-    	gates.push_back(g);
+        auto g = local_time_evolution_gate(sites, gamma, hz, Jx, j, dt/2);
+        gates.push_back(g);
         }
-        
-    for(int j = N_site-1; j >=1; --j)
+    for(int j = 2; j < N_site; j+=2)
         {
-        ITensor hh;
-		if(j == 1)
-            {
-            //non hermitian part 
-		    hh += -Cplx_i * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i/2 * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz/2 * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        else if(j == N_site-1)
-            {
-            //non hermitian part 
-		    hh += -Cplx_i/2 * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz/2 * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        else
-            {
-            //non hermitian part 
-		    hh += -Cplx_i/2 * gamma * sites.op("projUp",j)* sites.op("Id",j+1);
-            hh += -Cplx_i/2 * gamma * sites.op("Id",j)* sites.op("projUp",j+1);
-            
-            //hermitian part
-            //Sz
-            hh += Jz/2 * sites.op("Sz",j)* sites.op("Id",j+1);
-            hh += Jz/2 * sites.op("Id",j)* sites.op("Sz",j+1);
-            }
-        //Sx*Sx
-        hh += Jx * ITensor(sites.op("Sx",j))* ITensor(sites.op("Sx",j+1));
-        
-        auto g = TGate<ITensor>(hh, j, 2);
-        ExpTGate(g, sites, dt/2);
-    	gates.push_back(g);
+        auto g = local_time_evolution_gate(sites, gamma, hz, Jx, j, dt);
+        gates.push_back(g);
         }
-
+    for(int j = 1; j < N_site; j+=2)
+        {
+        auto g = local_time_evolution_gate(sites, gamma, hz, Jx, j, dt/2);
+        gates.push_back(g);
+        }
 	//-----------------------------------------------------
     //-------- Observable ---------------------------------
 	vector<MPO> OBS;
@@ -168,6 +142,7 @@ int main ( int argc, char *argv[] )
 		OBS.push_back(MPO(ampoSz));
         }
 
+    
 	for (int j = 2; j <= N_site; j++)
         {
 		auto ampocorr = AutoMPO(sites);
