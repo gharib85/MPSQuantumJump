@@ -184,12 +184,12 @@ QuantumJump<T>::Run()
         for (int i = 1; i < MPI_nnodes_; ++i)
             {
             MailBox mailbox(*env_,i);
-            vector<vector<double>> tmp;
+            vector<vector<Cplx>> tmp;
             mailbox.receive(tmp);
             for (int n=0; n<num_OBS_; n++)
                 {
                 transform (o_vs_t_.at(n).begin(), o_vs_t_.at(n).end(), tmp.at(n).begin(), 
-                                                    o_vs_t_.at(n).begin(), plus<double>());}
+                                                    o_vs_t_.at(n).begin(), plus<Cplx>());}
             }
         }
     else
@@ -217,7 +217,7 @@ QuantumJump<T>::onetrial()
             {
             for (int c=0; c< num_OBS_; c++)
                 {
-                double O = real(overlapC(psi, OBS_.at(c), psi));
+                auto O = overlapC(psi, OBS_.at(c), psi);
                 o_vs_t_.at(c).at(step)+=O/number_trial_/MPI_nnodes_;
                 }
             }
@@ -227,7 +227,7 @@ QuantumJump<T>::onetrial()
                 {
                 for (int c=0; c< num_OBS_; c++)
                     {
-                    double O = real(overlapC(psi, OBS_.at(c), psi));
+                    auto O = overlapC(psi, OBS_.at(c), psi);
                     o_vs_t_.at(c).at(0)+=O/number_trial_/MPI_nnodes_;
                     }
                 }
@@ -309,7 +309,7 @@ QuantumJump<T>::onetrial()
     }
 
 template<typename T>
-vector<vector<double>>
+vector<vector<Cplx>>
 QuantumJump<T>::getOBSvsT()
         {
         if (MPI_rank_==0)
@@ -319,7 +319,7 @@ QuantumJump<T>::getOBSvsT()
         else
             {
             error("Only root can access OBSvs_t");
-            return vector<vector<double>>();
+            return vector<vector<Cplx>>();
             }
         }
 
@@ -399,5 +399,5 @@ template void QuantumJump<ITensor>::Run();
 template void QuantumJump<IQTensor>::Run();
 template void QuantumJump<ITensor>::onetrial();
 template void QuantumJump<IQTensor>::onetrial();
-template vector<vector<double>> QuantumJump<ITensor>::getOBSvsT();
-template vector<vector<double>> QuantumJump<IQTensor>::getOBSvsT();
+template vector<vector<Cplx>> QuantumJump<ITensor>::getOBSvsT();
+template vector<vector<Cplx>> QuantumJump<IQTensor>::getOBSvsT();

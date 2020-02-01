@@ -51,7 +51,7 @@ class QuantumJump
                 Args arg,
                 Environment const& env);
 
-    vector<vector<double>> getOBSvsT();
+    vector<vector<Cplx>> getOBSvsT();
         
     void SteadyStateOnly(bool yn){SS_ = yn;};
     
@@ -67,7 +67,7 @@ class QuantumJump
     int number_trial_;
     int Ntstep_;
     bool SS_;
-    vector<vector<double>> o_vs_t_;
+    vector<vector<Cplx>> o_vs_t_;
 
     // Multicore parameters
     Environment const* env_;
