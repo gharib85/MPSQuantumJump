@@ -51,8 +51,7 @@ int main ( int argc, char *argv[] )
 	auto state = InitState(sites);
 	for(int i = 1; i <= N_site; ++i)
    	    {
-   		if(i%2 == 1) state.set(i,"Up");
-        else state.set(i,"Dn");
+   		state.set(i,"Up");
     	}	
 	auto psi_init = MPS(state);
     //-----------------------------------------------------
@@ -78,7 +77,7 @@ int main ( int argc, char *argv[] )
 	//Imaginary part of Hamiltonian
     for(int i = 1; i <= N_site; i++)
         {
-		ampoH += -Cplx_i*gamma,"projUp",i;
+		ampoH += -Cplx_i*gamma/2,"projUp",i;
 		}
 
     //-----------------------------------------------------

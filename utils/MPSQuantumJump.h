@@ -1,10 +1,11 @@
 #ifndef MPSQUANTUMJUMP_H
 #define MPSQUANTUMJUMP_H
 
-# include "itensor/all.h"
-# include "itensor/util/parallel.h"
-# include <vector>
-# include <mpi.h>
+#include "itensor/all.h"
+#include "itensor/util/parallel.h"
+#include <vector>
+#include <mpi.h>
+#include "TGate.h"
 
 using namespace itensor;
 using namespace std;
@@ -12,10 +13,7 @@ using namespace std;
 using UGate = BondGate<ITensor>;
 using IQUGate = BondGate<IQTensor>;
 
-template <class T> 
-struct TGate;
-using OpGate = TGate<ITensor>;
-using IQOpGate = TGate<IQTensor>;
+
 
 template <class T>
 class QuantumJump
@@ -43,7 +41,7 @@ class QuantumJump
     
     QuantumJump(double dt, 
                 double Tf, 
-                vector<BondGate<T>> gates, 
+                vector<TGate<T>> gates, 
                 vector<TGate<T>> cm, 
                 MPSt<T> psi_init, 
                 vector<MPOt<T>> OBS, 
@@ -93,11 +91,12 @@ class QuantumJump
     // If the time evolution is implemented by bond gate
     vector<TGate<T>> cm_Gate_;
     vector<TGate<T>> CC_Gate_;
-    vector<BondGate<T>> U_Gates_;
+    vector<TGate<T>> U_Gates_;
 
     void onetrial();
     };
 
+/*
 template <class T> 
 struct TGate
     {
@@ -111,6 +110,8 @@ struct TGate
     TGate(int i1_, T G_) 
     : i1(i1_), G(G_) { }
     };
+*/
+
 
 
 #endif
